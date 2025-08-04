@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 body {
   text-align: justify;
   font-family: "Segoe UI", sans-serif;
@@ -16,22 +15,3 @@ body {
 h1, h2, h3 {
   color: #2c3e50;
 }
-=======
-body {
-  text-align: justify;
-  font-family: "Segoe UI", sans-serif;
-  line-height: 1.6;
-}
-
-.navbar {
-  font-weight: bold;
-}
-
-.justify {
-  text-align: justify;
-}
-
-h1, h2, h3 {
-  color: #2c3e50;
-}
->>>>>>> 8d225f0a88014ea1c097de730917c19f36e90bb1

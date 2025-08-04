@@ -70,6 +70,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -88,6 +117,11 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción">Introducción</a></li>
   <li><a href="#metodología" id="toc-metodología" class="nav-link" data-scroll-target="#metodología">Metodología</a></li>
+  <li><a href="#resultados" id="toc-resultados" class="nav-link" data-scroll-target="#resultados">Resultados</a>
+  <ul class="collapse">
+  <li><a href="#análisis-de-los-efectos-principales-y-las-interacciones-entre-factores" id="toc-análisis-de-los-efectos-principales-y-las-interacciones-entre-factores" class="nav-link" data-scroll-target="#análisis-de-los-efectos-principales-y-las-interacciones-entre-factores">Análisis de los Efectos Principales y las Interacciones entre Factores</a></li>
+  </ul></li>
+  <li><a href="#conclusiones" id="toc-conclusiones" class="nav-link" data-scroll-target="#conclusiones">Conclusiones</a></li>
   <li><a href="#referencias" id="toc-referencias" class="nav-link" data-scroll-target="#referencias">Referencias</a></li>
   </ul>
 </nav>
@@ -131,58 +165,44 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="introducción">Introducción</h2>
 <p>En un mundo donde los datos son abundantes pero el tiempo y los recursos son limitados, la experimentación eficiente se convierte en una ventaja competitiva. No se trata solo de probar combinaciones de factores, sino de encontrar patrones ocultos y tomar decisiones informadas con base en evidencia.</p>
 <p>Hoy, el diseño de experimentos evoluciona junto con la inteligencia artificial, la simulación y la automatización. Los desafíos del futuro exigen estrategias experimentales más inteligentes, capaces de adaptarse y aprender en tiempo real. Innovar no es cuestión de suerte, sino de experimentación planificada.</p>
-<p>El diseño factorial es una técnica estadística fundamental que permite evaluar el efecto de múltiples factores sobre una variable de respuesta. En este proyecto, se llevará a cabo un experimento diseñado para investigar factores que influyen en el tiempo de vuelo de un avión hecho de papel, manteniendo constantes tanto la fuerza aplicada como la inclinación del lanzamiento. Para ello, utilizaremos un diseño factorial 3x3x3, lo que significa que exploramos tres factores clave: el diseño del avión, el tipo de papel y el tamaño del avión, cada uno con tres niveles diferentes, 5 réplicas para cada uno de los niveles de cada tratamiento, y así lograr capturar la mayor variabilidad y disminuyendo el error experimental.</p>
-<p>La variable que estaremos estudiando será el tiempo de vuelo del avión de papel, un avión de papel bueno es aquel que permanece más tiempo en el aire (mayor tiempo de vuelo), así que la variable de respuesta sería el tiempo de vuelo, que se mide desde el momento en que el avión de papel se lanza hasta el momento en que toca el suelo.</p>
-<p>A través de este estudio, buscamos aplicar conceptos de diseño de experimentos completamente al azar, utilizando un enfoque factorial. Esto nos permitirá no solo identificar los efectos individuales de cada factor sobre el tiempo de vuelo, sino también explorar posibles interacciones entre ellos.</p>
-<p>Al final, esperamos obtener conclusiones que contribuyan a optimizar el rendimiento de vuelo de los aviones de papel, proporcionando una comprensión más profunda de los principios aerodinámicos en juego.</p>
+<p>El diseño factorial es una técnica estadística fundamental que permite evaluar el efecto de múltiples factores sobre una variable de respuesta. En este proyecto, se llevará a cabo un experimento diseñado para investigar factores que influyen en el tiempo de vuelo de un avión hecho de papel, manteniendo constantes tanto la fuerza aplicada como la inclinación del lanzamiento.</p>
+<p>Para ello, utilizaremos un diseño factorial 3x3x3, lo que significa que exploramos tres factores clave: el diseño del avión, el tipo de papel y el tamaño del avión, cada uno con tres niveles diferentes, 5 réplicas para cada uno de los niveles de cada tratamiento, y así lograr capturar la mayor variabilidad y disminuyendo el error experimental.</p>
+<figure style="text-align: center;" class="figure">
+
+  <div style="display: flex; justify-content: center; gap: 20px;">
+    <img src="Graficos/3.jpg" style="width: 50%;" class="figure-img">
+    <img src="Graficos/4.jpg" style="width: 50%;" class="figure-img">
+  </div>
+
+  <figcaption style="margin-top: 10px;">
+    Figura 1. Elaboración de los Aviones de Papel.
+  </figcaption>
+
+</figure>
+<p>A través de este estudio, buscamos aplicar los principios del diseño de experimentos completamente al azar con un enfoque factorial, con el fin de analizar el efecto que diferentes factores tienen sobre el tiempo de vuelo de los aviones de papel. Esta metodología permite evaluar no solo los efectos principales de cada factor, sino también las interacciones entre ellos, lo cual proporciona una visión más completa del comportamiento de la variable de respuesta.</p>
+<p>Para modelar estadísticamente el experimento, se utilizó un diseño factorial completo con tres factores: <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span> y <span class="math inline">\(C\)</span>, con <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span> y <span class="math inline">\(c\)</span> niveles respectivamente. El modelo matemático general correspondiente es:</p>
+<p><span class="math display">\[\begin{align*}
+Y_{ijk} &amp;= \mu + \alpha_i + \beta_j + \gamma_k \\
+        &amp;\quad + (\alpha\beta)_{ij} + (\alpha\gamma)_{ik} + (\beta\gamma)_{jk} \\
+        &amp;\quad + (\alpha\beta\gamma)_{ijk} + \epsilon_{ijk}
+\end{align*}\]</span></p>
+<p>Donde:</p>
+<ul>
+<li><p><span class="math inline">\(Y_{ijk}\)</span> es el valor de la respuesta para el <span class="math inline">\(i\)</span>-ésimo nivel del factor <span class="math inline">\(A\)</span>, el <span class="math inline">\(j\)</span>-ésimo nivel del factor <span class="math inline">\(B\)</span>, y el <span class="math inline">\(k\)</span>-ésimo nivel del factor <span class="math inline">\(C\)</span>.</p></li>
+<li><p><span class="math inline">\(\mu\)</span> es la media general de todas las observaciones.</p></li>
+<li><p><span class="math inline">\(\alpha_i\)</span>, <span class="math inline">\(\beta_j\)</span>, <span class="math inline">\(\gamma_k\)</span> son los efectos principales de los factores <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span> y <span class="math inline">\(C\)</span>, respectivamente.</p></li>
+<li><p><span class="math inline">\((\alpha\beta)_{ij}\)</span>, <span class="math inline">\((\alpha\gamma)_{ik}\)</span>, <span class="math inline">\((\beta\gamma)_{jk}\)</span> son los efectos de interacción de dos factores.</p></li>
+<li><p><span class="math inline">\((\alpha\beta\gamma)_{ijk}\)</span> es el efecto de interacción de tres factores.</p></li>
+<li><p><span class="math inline">\(\epsilon_{ijk}\)</span> es el error aleatorio, que se asume independiente y normalmente distribuido con media cero y varianza <span class="math inline">\(\sigma^2\)</span>.</p></li>
+</ul>
+<p>Este modelo nos permite estimar cómo cada uno de los factores (por separado y en combinación) incide en la respuesta. Para verificar si estos efectos son estadísticamente significativos, se formula el siguiente juego de hipótesis global para cada término del modelo:</p>
+<p>Hipótesis nula <span class="math inline">\(H_0\)</span>: el efecto del factor (o interacción) no es significativo, es decir, todas las medias de los tratamientos son iguales.</p>
+<p>Hipótesis alternativa <span class="math inline">\(H_1\)</span>: al menos un nivel del factor (o interacción) produce un cambio significativo en la media de la respuesta.</p>
+<p>Estas hipótesis se contrastan mediante un análisis de varianza (ANOVA). En función de los valores p y la comparación entre los estadísticos F calculados y los F tabulados, se determinará qué efectos son significativos. Esto nos permitirá obtener conclusiones útiles para optimizar el diseño de los aviones de papel, comprendiendo mejor los principios aerodinámicos involucrados.</p>
 </section>
 <section id="metodología" class="level2">
 <h2 class="anchored" data-anchor-id="metodología">Metodología</h2>
-<p>Durante el desarrollo del diseño experimental, se establecio un número de factores, niveles por cada factor y el número de repeticiones en cada uno de ellos. Para el tiempo de vuelo de los aviones de papel, se eligieron tres diseños nombrados como diseño (A,B,C), a su vez el tipo de papel con el se realizó cada avión y por ultimo adiccionamos tres diferentes tamaños por diseño, tamaños (grande, mediano, pequeño)}.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Factores</th>
-<th>Papel</th>
-<th>Tamaño</th>
-<th>Diseño</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Niveles</td>
-<td>3</td>
-<td>3</td>
-<td>3</td>
-</tr>
-<tr class="even">
-<td>Réplicas</td>
-<td>5</td>
-<td>5</td>
-<td>5</td>
-</tr>
-<tr class="odd">
-<td>N° Aviones</td>
-<td>45</td>
-<td>45</td>
-<td>45</td>
-</tr>
-</tbody>
-</table>
-<p>Una vez definido los aspectos antes mencionados, se procedio a reliazar el emsanblado de cada avión considerando cada uno de los factores a incluir en el modelo. Se construyeron 135 aviones donde por cada diseño se construyeron 45 por tamaño 45 y por papel 45. A continuación se datalla las caracteristicas atribuidas a cada diseño relacionado con el tipo de papel y tamaño:</p>
-<p>Se eligieron tres diseños con un estilo aérodinamico distinto, el primero; se realizo de la siguiente manera: . Para los tres tamaños se tomaron hojas de diferentes tipos de papel con unas dimensiones de 27,4 para la base y una altura de 20,4 cm para cada categoria de los aviones. Para el tamaño grande del avión se uso la hoja completa, para los tamaños Mediano la mitad de la hoja con esas mismas dimensiones y para tamaño pequeño 1/4 de la hoja o la mitad de la mitad ya cortada.</p>
-<p>Para el diseño número 2 (B) cada avión se realizo de la siguiente manera: y de igual manera que los diseños A y B se obtuvieron las mismas dimensiones para cada avión con los tres tipos de tamaños especificados y de igual manera para el .</p>
-<p>Por cada combinación de los niveles de los factores se realizó un lanzamiento para un total de 5 lanzamientos por diseño, tamaño y papel. El lanzamiento fue realizado en el ala derecha de la biblioteca de la universidad Nacional de la Sede de La Paz. En cada lanzamiento participaron los estudiantes Kevin Caceres, Triana Nicols y Jose Urquijo.</p>
-<p>Para los tiempo de lanzamiento de los aviones se corroboro a través de una prueba de Shapiro-Wilk que los residuos del modelo no proviene de una población con distribución normal y a raíz de esto se decidio realizar una transformación logaritmica con la que se logro capturar dicha normalidad para un nivel de significancia del 0.05. Por otro lado la homogeneidad de varianza fue capturada una vez realizada la transformación.</p>
-<p>Al tiempo que se realizaba cada lanzamiento, se recolecto el tiempo de vuelo de cada uno de los aviones para su debido analisis. se intento probar con distintos tipos de diseños experimentales que nos permitiera capturar la mayor variabilidad posible. En un intento de llevar lo acabo se decidio ajustar diseño factorial completo.</p>
-<p>\end{multicols}</p>
-<p>El presente estudio analizó el tiempo de vuelo de aviones de papel considerando tres factores: el diseño del avión (A, B y C), el tipo de papel utilizado (papel azúcar, papel iris y papel bond) y el tamaño del avión (grande, mediano y pequeño). A partir de un diseño factorial con cinco réplicas por combinación, se evaluaron los efectos principales y las interacciones entre estos factores que optimizan la aerodinámica del avión.</p>
-<p>Al revisar los resultados de la tabla ANOVA, observamos que la interacción entre diseño y tamaño tiene un valor p de 0.044, menor a un nivel de confianza del 0.05. Esto sugiere que <strong>existe una relación significativa</strong>, entre ambos factores; por tanto se rechaza la hipotesis nula (Ho), indicando que el tamaño y el diseño del avión pueden <strong>influir en el tiempo de vuelo</strong>. Es posible que haya una combinación específica de diseño y tamaño que genere un impacto notable en la duración del vuelo.</p>
-<div style="page-break-after: always;"></div>
-<p><strong>Análisis de los Efectos Principales y las Interacciones entre Factores en el Modelo Experimental</strong></p>
-<div style="page-break-after: always;"></div>
-<p>Proceso de elaboración de los aviones de papel con sus diferentes tamaños, diseño y tipo de papel usado</p>
-<div style="page-break-after: always;"></div>
+<p>Durante el desarrollo del diseño experimental, se establecio un número de factores, niveles por cada factor y el número de repeticiones en cada uno de ellos. Para el tiempo de vuelo de los aviones de papel, se eligieron tres diseños nombrados como diseño (A,B,C), a su vez el tipo de papel con el se realizó cada avión y por ultimo adiccionamos tres diferentes tamaños por diseño, tamaños (grande, mediano, pequeño).</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 11%">
@@ -219,6 +239,187 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<p>Una vez definido los aspectos antes mencionados, se procedio a reliazar el emsanblado de cada avión considerando cada uno de los factores a incluir en el modelo. Se construyeron 135 aviones donde por cada diseño se construyeron 45 por tamaño 45 y por papel 45. A continuación se datalla las caracteristicas atribuidas a cada diseño relacionado con el tipo de papel y tamaño</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Factores</th>
+<th>Papel</th>
+<th>Tamaño</th>
+<th>Diseño</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Niveles</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>Réplicas</td>
+<td>5</td>
+<td>5</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>N° Aviones</td>
+<td>45</td>
+<td>45</td>
+<td>45</td>
+</tr>
+</tbody>
+</table>
+<p>Se eligieron tres diseños con un estilo aérodinamico distinto, el primero; se realizo de la siguiente manera: . Para los tres tamaños se tomaron hojas de diferentes tipos de papel con unas dimensiones de 27,4 para la base y una altura de 20,4 cm para cada categoria de los aviones. Para el tamaño grande del avión se uso la hoja completa, para los tamaños Mediano la mitad de la hoja con esas mismas dimensiones y para tamaño pequeño 1/4 de la hoja o la mitad de la mitad ya cortada.</p>
+<p>Para el diseño número 2 (B) cada avión se realizo de la siguiente manera: y de igual manera que los diseños A y B se obtuvieron las mismas dimensiones para cada avión con los tres tipos de tamaños especificados y de igual manera para el .</p>
+<p>Por cada combinación de los niveles de los factores se realizó un lanzamiento para un total de 5 lanzamientos por diseño, tamaño y papel. El lanzamiento fue realizado en el ala derecha de la biblioteca de la universidad Nacional de la Sede de La Paz. En cada lanzamiento participaron los estudiantes Kevin Caceres, Triana Nicols y Jose Urquijo.</p>
+<p>Para los tiempo de lanzamiento de los aviones se corroboro a través de una prueba de Shapiro-Wilk que los residuos del modelo no proviene de una población con distribución normal y a raíz de esto se decidio realizar una transformación logaritmica con la que se logro capturar dicha normalidad para un nivel de significancia del 0.05. Por otro lado la homogeneidad de varianza fue capturada una vez realizada la transformación.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Graficos/Normalidad.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Al tiempo que se realizaba cada lanzamiento, se recolecto el tiempo de vuelo de cada uno de los aviones para su debido analisis. se intento probar con distintos tipos de diseños experimentales que nos permitiera capturar la mayor variabilidad posible. En un intento de llevar lo acabo se decidio ajustar diseño factorial completo.</p>
+</section>
+<section id="resultados" class="level2">
+<h2 class="anchored" data-anchor-id="resultados">Resultados</h2>
+<p>El presente estudio analizó el tiempo de vuelo de aviones de papel considerando tres factores: el diseño del avión (A, B y C), el tipo de papel utilizado (papel azúcar, papel iris y papel bond) y el tamaño del avión (grande, mediano y pequeño). A partir de un diseño factorial con cinco réplicas por combinación, se evaluaron los efectos principales y las interacciones entre estos factores que optimizan la aerodinámica del avión.</p>
+<p>Al revisar los resultados de la tabla ANOVA, observamos que la interacción entre diseño y tamaño tiene un valor p de 0.044, menor a un nivel de confianza del 0.05. Esto sugiere que <strong>existe una relación significativa</strong>, entre ambos factores; por tanto se rechaza la hipotesis nula (Ho), indicando que el tamaño y el diseño del avión pueden <strong>influir en el tiempo de vuelo</strong>. Es posible que haya una combinación específica de diseño y tamaño que genere un impacto notable en la duración del vuelo.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 5%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 8%">
+<col style="width: 17%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fuente</th>
+<th>GL</th>
+<th>SC Ajust.</th>
+<th>MC Ajust.</th>
+<th>F Cal.</th>
+<th>F tab. (0.05)</th>
+<th>Valor p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Diseño</td>
+<td>2</td>
+<td>1,0020</td>
+<td>0,50102</td>
+<td>2,99</td>
+<td>3,08</td>
+<td>0,055</td>
+</tr>
+<tr class="even">
+<td>Tamaño</td>
+<td>2</td>
+<td>0,2979</td>
+<td>0,14895</td>
+<td>0,89</td>
+<td>3,08</td>
+<td>0,414</td>
+</tr>
+<tr class="odd">
+<td>Papel</td>
+<td>2</td>
+<td>0,4282</td>
+<td>0,21408</td>
+<td>1,28</td>
+<td>3,08</td>
+<td>0,283</td>
+</tr>
+<tr class="even">
+<td>Diseño x Tamaño</td>
+<td>4</td>
+<td>1,7035</td>
+<td>0,42587</td>
+<td>2,54</td>
+<td>2,46</td>
+<td>0,044</td>
+</tr>
+<tr class="odd">
+<td>Diseño x Papel</td>
+<td>4</td>
+<td>0,2394</td>
+<td>0,05986</td>
+<td>0,36</td>
+<td>2,46</td>
+<td>0,839</td>
+</tr>
+<tr class="even">
+<td>Tamaño x Papel</td>
+<td>4</td>
+<td>0,5223</td>
+<td>0,13058</td>
+<td>0,78</td>
+<td>2,46</td>
+<td>0,541</td>
+</tr>
+<tr class="odd">
+<td>Diseño x Tamaño x Papel</td>
+<td>8</td>
+<td>1,5400</td>
+<td>0,19250</td>
+<td>1,15</td>
+<td>2,01</td>
+<td>0,337</td>
+</tr>
+<tr class="even">
+<td>Error</td>
+<td>108</td>
+<td>18,1052</td>
+<td>0,16764</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td>134</td>
+<td>23,8386</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<section id="análisis-de-los-efectos-principales-y-las-interacciones-entre-factores" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-de-los-efectos-principales-y-las-interacciones-entre-factores">Análisis de los Efectos Principales y las Interacciones entre Factores</h3>
+
+<div style="display: flex; justify-content: center;">
+  <img src="Graficos/Efectos.jpg" style="width: 50%; margin-right: 10px;">
+  <img src="Graficos/Interacciones.jpg" style="width: 50%;">
+</div>
+
+
+<p>El análisis factorial muestra que los factores Diseño, Tamaño y Papel tienen un impacto significativo en la variable de respuesta (Media de Lg). En el gráfico de efectos principales, se observa que el Diseño C tiene la mayor media, mientras que el Diseño B presenta la menor. En cuanto al Tamaño, las medias aumentan progresivamente de Grande a Pequeño, indicando que este factor influye de manera creciente en la variable de respuesta. Por otro lado, el Papel también afecta los resultados, con el tipo Boom mostrando las mayores medias y el tipo Iris las más bajas.</p>
+<p>El análisis de interacciones revela que el efecto de un factor no es constante a través de los niveles de los otros factores. Se observa una interacción notable entre Diseño y Tamaño, especialmente en el Diseño C, donde los efectos de los diferentes tamaños son más variables. De manera similar, las interacciones entre Diseño y Papel, así como Tamaño y Papel, indican que los efectos de estos factores dependen de los niveles de los otros.</p>
+<p>Dado que las líneas en las gráficas de interacción no son paralelas, se sugiere que los efectos no son aditivos, lo que refuerza la necesidad de incluir términos de interacción en el modelo estadístico. Estos resultados indican que el comportamiento de la variable de respuesta es complejo y está influenciado por la combinación específica de los niveles de los factores evaluados.</p>
+</section>
+</section>
+<section id="conclusiones" class="level2">
+<h2 class="anchored" data-anchor-id="conclusiones">Conclusiones</h2>
+<p>Los resultados mostraron que el tiempo de vuelo estuvo significativamente influenciado por el diseño del avión y el tamaño. En particular, el diseño C presentó los tiempos de vuelo más altos en promedio, mientras que el diseño B mostró una menor capacidad de planeo. En cuanto al tipo de papel, el papel bond demostró ser el más adecuado para aumentar la duración del vuelo, haciendo una investigación podemos decir que</p>
+<ul>
+<li><p>El tipo de papel utilizado afecta el peso del avión de papel. Un papel más ligero puede permitir que el avión vuele más tiempo, ya que reduce la carga que las alas deben sostener.</p></li>
+<li><p>La rigidez del papel influye en la forma en que se mantiene el avión durante el vuelo. Un papel más rígido puede ayudar a mantener la forma del avión.</p></li>
+<li><p>Un diseño con alas más anchas y planas puede generar más sustentación, lo que permite un vuelo más prolongado. Las alas deben estar diseñadas para minimizar la resistencia y maximizar la sustentación.</p></li>
+<li><p>El tipo de papel determina el peso y la rigidez del avión, afectando su capacidad para volar durante más tiempo.</p></li>
+<li><p>El diseño del avión influye en la sustentación y la resistencia, lo que a su vez impacta en la estabilidad y el control durante el vuelo.</p></li>
+</ul>
+<p>El análisis de varianza (ANOVA) reveló interacciones significativas entre el diseño del avión y el tipo de papel, lo que sugiere que ciertas combinaciones fueron más efectivas que otras. Por ejemplo, el diseño C combinado con papel Bond obtuvo los mejores resultados, mientras que el diseño B con papel Iris presentó los tiempos de vuelo más bajos. El tamaño del avión tuvo un efecto moderado, con los modelos pequeños logrando un mejor equilibrio entre la sustentación y la resistencia al aire. Estos hallazgos son relevantes para la optimización de modelos de aviones de papel, proporcionando información clave sobre cómo la elección de materiales y el diseño afectan el rendimiento de vuelo. Se recomienda realizar estudios adicionales que consideren otros factores como las condiciones del lanzamiento y la influencia de corrientes de aire para validar y ampliar estos resultados. Finalmente, es importante destacar que el presente estudio tuvo algunas limitaciones, como la variabilidad en la ejecución de los lanzamientos y posibles diferencias en la precisión de los dobleces en cada réplica. Sin embargo, los hallazgos obtenidos constituyen una base sólida para futuras investigaciones sobre aerodinámica en modelos de papel y su aplicación en experimentos educativos y recreativos.</p>
+<p>Proceso de elaboración de los aviones de papel con sus diferentes tamaños, diseño y tipo de papel usado</p>
 </section>
 <section id="referencias" class="level2">
 <h2 class="anchored" data-anchor-id="referencias">Referencias</h2>
